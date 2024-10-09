@@ -1,13 +1,15 @@
-﻿namespace Lab05;
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace Lab05;
 
 public class RationalNumber
 {
-    readonly int numerator;
-    readonly int denominator;
+    public readonly int numerator;
+    public readonly int denominator;
     public RationalNumber(int numerator, int denominator)
     {
-        this.numerator = GreatestCommonDenominator(numerator, denominator);
-        this.denominator = GreatestCommonDenominator(denominator, numerator);
+        this.numerator = numerator/ GreatestCommonDenominator(numerator, denominator);
+        this.denominator = denominator / GreatestCommonDenominator(numerator, denominator);
     }
     public static int GreatestCommonDenominator(int a, int b)
     {
@@ -28,23 +30,24 @@ public class RationalNumber
 
 public class MixedNumber
 {
-    MixedNumber mixedNumber;
+    readonly int WholeUnits;
+    RationalNumber PartialUnits;
     public MixedNumber(int numerator, int denominator)
     {
-        mixedNumber = new MixedNumber(new RationalNumber(numerator, denominator));
+        PartialUnits = new RationalNumber(numerator, denominator);
     }
     public MixedNumber(RationalNumber rationalNumber)
     {
-
+        WholeUnits = ((rationalNumber.numerator - (rationalNumber.numerator % rationalNumber.denominator)) / rationalNumber.denominator);
     }
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return HashCode.Combine(WholeUnits , PartialUnits.GetHashCode());
     }
 
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+        return obj.GetHashCode() == this.GetHashCode();
     }
 }
 
